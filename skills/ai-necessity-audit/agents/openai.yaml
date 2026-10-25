@@ -1,0 +1,6 @@
+interface:
+  display_name: "AI Necessity Audit"
+  short_description: "Separate real user value from AI rebranding"
+  default_prompt: "Use $ai-necessity-audit to reduce the proposal to its minimum outcome, compare the strongest non-AI baseline, and state the evidence-backed AI increment, cost, risk, and decision recommendation."
+policy:
+  allow_implicit_invocation: true

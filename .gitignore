@@ -20,3 +20,11 @@ skills/*/logs/
 *.mov
 *.zip
 
+# Python packaging and test caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+

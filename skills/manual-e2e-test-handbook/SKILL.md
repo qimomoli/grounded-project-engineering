@@ -20,6 +20,7 @@ Use this skill when the user wants a local, step-by-step manual test guide deriv
 - Store generated manifests, handbooks, sanitized evidence, and learned practices under this skill's own `workspace/` tree, never in the tested project's repository unless the user explicitly requests another location.
 - Treat the current run as a recoverable state machine. Persist the phase, current Case, completed Cases, blockers, next action, approval envelope, and last checkpoint; do not rely on conversation memory for control flow.
 - When machine testing becomes difficult, make a bounded self-resolution attempt and escalate to the operator instead of looping. Record every attempt and stop when the retry budget or evidence boundary is reached.
+- Detect the execution operating system before producing or running commands. Record the selected target as `windows`, `linux`, or `macos` in the run state and handbook. The execution system is the default target; if the target differs, require an explicit operator override instead of guessing.
 
 ## Workflow
 
@@ -216,13 +217,13 @@ After each completed run, extract reusable knowledge into the project experience
 
 ## Command rules
 
-- Commands must be Windows `cmd.exe` commands. Use `cd /d`, `set`, `curl`, `docker`, and `docker compose` syntax; do not provide PowerShell, Bash, WSL, or host-side Unix commands.
+- Commands must match the recorded target operating system. For `windows`, use native `cmd.exe` syntax such as `cd /d`, `set`, `curl`, `docker`, and `docker compose`; do not substitute PowerShell. For `linux` or `macos`, use POSIX shell syntax such as `cd`, `export`, `curl`, `docker`, and `docker compose`; do not emit Windows `%VAR%` or `cd /d` syntax. When a command is shell-specific, provide the variant for the selected target only.
 - Keep each command near or below 100 characters. Split long operations into short numbered commands and use short variables or a working-directory change. Do not hide a long command behind an unreadable one-liner.
 - Database and Redis operations must run inside the relevant container with `docker exec` or `docker compose exec`. Do not use host-installed `mysql`, `psql`, `redis-cli`, or equivalent clients.
 - Use read-only queries for verification when possible. For mutations, make the test-data prefix explicit and provide the matching cleanup command.
 - Never embed real secrets in the handbook. Use repository-documented environment variables or `<PLACEHOLDER>` values and state exactly what the tester must supply.
 - Preserve the tested command and a concise output excerpt in the machine-result table. If an output is too long, record the decisive line and where the full log was captured.
-- For commands that reference the skill workspace, shorten the path first with `set TD=%USERPROFILE%\.codex\skills\manual-e2e-test-handbook\workspace` when that keeps individual commands readable and near the length limit.
+- For commands that reference the skill workspace, shorten the path with a target-specific variable when that keeps individual commands readable: on Windows use `set TD=%USERPROFILE%\.codex\skills\manual-e2e-test-handbook\workspace`; on Linux/macOS use `export TD="$HOME/.codex/skills/manual-e2e-test-handbook/workspace"`.
 - Keep runtime state and journal records concise, append-only where possible, and free of secrets or full raw logs; link to sanitized evidence instead.
 
 ## Output and safety behavior

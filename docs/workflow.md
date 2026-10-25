@@ -47,6 +47,8 @@
 
 该 Skill 默认只允许本地资源，不允许把运行状态、项目知识、日志、视频和业务数据提交到本仓库。
 
+命令生成按目标操作系统分支：Windows 保持 `cmd.exe`；Linux/macOS 使用 POSIX shell。默认使用本次执行环境，若目标系统不同，必须显式记录并确认 override。
+
 ## 6. 安装策略
 
 建议把整个仓库作为一个版本化套件获取，再将六个 Skill 目录整体安装到目标 Agent 的 Skill 根目录。单独下载某一个 Skill 可能丢失：
@@ -64,5 +66,9 @@
 - `LICENSE` 说明代码、Skill 文本和文档的再使用授权。
 
 这些文档描述的是通用 Skill 套件，不记录任何具体业务项目、个人环境或运行结果。
+
+## 8. 仓库验证入口
+
+仓库级结构检查和测试编排统一通过 `python -m gpe validate` 与 `python -m gpe test` 执行；GitHub Actions 在 Windows 与 POSIX runner 上重复执行这些入口。
 
 

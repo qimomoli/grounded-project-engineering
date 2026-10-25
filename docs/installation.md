@@ -25,6 +25,31 @@ skills/
 
 不同 Agent 宿主的安装目录可能不同。不要把本机绝对路径写进仓库或安装脚本；安装路径应由使用者根据宿主配置决定。
 
+## 可复现安装
+
+仓库提供 `gpe` CLI。它只依赖 Python 标准库，安装器从当前仓库复制完整的 Skill 目录，不复制运行时资料。
+
+先在仓库根目录执行：
+
+```text
+python -m pip install -e .
+python -m gpe validate
+```
+
+Windows `cmd.exe`：
+
+```text
+python -m gpe install --source . --target "%USERPROFILE%\\.codex\\skills"
+```
+
+Linux/macOS：
+
+```text
+python -m gpe install --source . --target "$HOME/.codex/skills"
+```
+
+目标目录中已有同名 Skill 时，安装器默认停止并报告冲突；确认要覆盖时追加 `--force`。使用 `--skill <name>` 可只安装一个 Skill。
+
 ## 运行时资料
 
 以下内容属于本地运行时资料，不应从其他项目复制到本仓库：
@@ -58,3 +83,13 @@ skills/
 - 敏感信息扫描和 `git diff --check`。
 
 测试命令和 Python 路径由本地环境决定，不在文档中固定个人机器路径。
+
+## 平台感知的 E2E 手册
+
+`manual-e2e-test-handbook` 会记录本次执行的目标操作系统并生成对应命令：Windows 使用 `cmd.exe`，Linux/macOS 使用 POSIX shell。默认目标是当前执行系统；跨系统测试必须显式指定目标，不会自动猜测。
+
+仓库级验证入口为：
+
+```text
+python -m gpe test
+```

@@ -48,6 +48,20 @@
 
 安装时只复制静态定义、references、scripts、agents 和 evals。不要把本地运行产生的 `knowledge/`、`workspace/`、日志、视频或测试证据提交到公共仓库。
 
+## CLI 与验证
+
+仓库提供一个只依赖 Python 标准库的 CLI。安装开发入口后，可以使用：
+
+```text
+python -m pip install -e .
+python -m gpe --version
+python -m gpe validate
+python -m gpe test
+python -m gpe install --source . --target <SKILL_ROOT>
+```
+
+`install` 默认拒绝覆盖已有 Skill；需要更新时显式追加 `--force`。CI 会在 Windows 和 POSIX runner 上执行结构校验、测试、策略评估和 whitespace 检查。
+
 ## 隐私与安全边界
 
 本仓库不应包含：
@@ -66,6 +80,8 @@
 - `skills/*/references/`：schema、运行状态和手册模板。
 - `skills/*/scripts/`：项目知识和避坑记录的校验/维护脚本。
 - `skills/*/evals/`：`confirm-before-work` 的策略评估用例。
+- `gpe/`：版本、结构校验、测试编排和 Skill 安装 CLI。
+- `.github/workflows/ci.yml`：Windows/POSIX 跨平台验证。
 
 ## GitHub 仓库文件
 
