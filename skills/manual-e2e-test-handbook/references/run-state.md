@@ -20,6 +20,16 @@ workspace/projects/<project-key>/runs/<run-id>/
 {
   "run_id": "20261023-143000-a1b2c3d",
   "project_key": "project-a-1a2b3c4d5e",
+  "manifest_path": "projects/project-a-1a2b3c4d5e/manifests/功能_版本_20261023-143000-a1b2c3d_改造范围清单.md",
+  "handbook_path": "projects/project-a-1a2b3c4d5e/handbooks/功能_版本_20261023-143000-a1b2c3d_人工测试手册.md",
+  "authorized_output_paths": [
+    "projects/project-a-1a2b3c4d5e/manifests/功能_版本_20261023-143000-a1b2c3d_改造范围清单.md",
+    "projects/project-a-1a2b3c4d5e/handbooks/功能_版本_20261023-143000-a1b2c3d_人工测试手册.md",
+    "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/run-state.json",
+    "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/event-journal.jsonl",
+    "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/machine-results.md",
+    "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/evidence/*.log"
+  ],
   "phase": "APPLICATION_ISOLATION",
   "status": "running",
   "current_case": "I-003",

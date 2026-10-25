@@ -92,9 +92,9 @@ Before mutating anything, present a short execution approval containing:
 - test-data scope and unique prefixes;
 - cleanup commands and whether they are destructive;
 - the case IDs that will be run;
-- every planned handbook, manifest, sanitized evidence, project metadata, experience, and index file, using exact paths or narrowly bounded run-specific patterns;
+- the exact final handbook path for this `run-id`, plus every planned manifest, sanitized evidence, project metadata, experience, and index file, using exact paths or narrowly bounded run-specific patterns;
 - the run-state file, event journal, machine-result file, and evidence pattern for this `run-id`;
-- the statement that this single approval covers creation and updates of those listed files for this run.
+- the statement that this single approval covers creation and updates of those listed files for this run, including the final handbook and its index entries.
 
 This is the run's batch authorization envelope. It is valid only for the listed `project-key`, `run-id`, operations, resources, and paths, and ends when the run completes or is abandoned. After approval, create and update the listed handbook, experience, manifest, evidence, metadata, and index files without asking again for each write.
 
@@ -227,7 +227,7 @@ After each completed run, extract reusable knowledge into the project experience
 
 ## Output and safety behavior
 
-- Default to returning the handbook in the response. For persistent output, include the exact target path in the run's initial batch authorization. A separately requested path outside that envelope requires confirmation.
+- Default to returning the handbook in the response. For persistent output, derive the exact target path from the `project-key`, feature/version, and `run-id`, include that path in the run's initial batch authorization, persist it in `run-state.json`, and register it in the project/global indexes for later reuse. A separately requested path outside that envelope requires confirmation.
 - When persistent output is requested or required by this workflow, use the skill-local `workspace/` location by default rather than the tested repository.
 - Do not run containers or mutate data while merely drafting a plan or explaining the skill.
 - Do not modify application code, Docker configuration, migrations, or test fixtures as part of this skill unless the user separately requests that work.

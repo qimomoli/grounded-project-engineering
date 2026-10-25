@@ -4,6 +4,9 @@
 
 ## 0. 改造范围完整性
 
+- 最终手册路径：`<skill workspace>/projects/<project-key>/handbooks/<功能名>_<版本>_<run-id>_人工测试手册.md`
+- 本轮批量授权摘要：`<approval envelope ID or summary>`
+- 可复用入口：`<项目索引路径和全局索引路径>`
 - 范围状态：`Complete / Incomplete`
 - 基线分支/提交：`<baseline branch or commit>`
 - 测试分支/提交/构建：`<test branch, commit, or build>`
@@ -29,6 +32,8 @@
 - 下一动作：`<single actionable step>`
 - 状态文件：`<run-state path>`
 - 事件日志：`<event-journal path>`
+- 范围清单：`<manifest path>`
+- 最终手册：`<handbook path; must match the authorized path>`
 
 本节必须能让另一轮会话恢复测试，不得只写“继续测试”或“处理失败”。
 
