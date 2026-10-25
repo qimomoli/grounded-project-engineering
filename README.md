@@ -57,14 +57,22 @@
 ## 目录
 
 - `skills/`：六个可独立触发但建议整体安装的 Skill。
-- `docs/workflow.md`：协同关系、触发边界和迁移说明。
+- `docs/workflow.md`：六个 Skill 的协同关系、触发边界和维护流程。
+- `docs/installation.md`：跨宿主安装、更新和运行时资料边界。
 - `skills/*/references/`：schema、运行状态和手册模板。
 - `skills/*/scripts/`：项目知识和避坑记录的校验/维护脚本。
 - `skills/*/evals/`：`confirm-before-work` 的策略评估用例。
+
+## GitHub 仓库文件
+
+- `README.md`：仓库定位、快速入口和公开边界。
+- `docs/workflow.md`：Skill 之间的协同关系，不要求每次任务触发全部 Skill。
+- `docs/installation.md`：整套安装和升级说明。
+- `LICENSE`：MIT 授权文本。
 
 ## 当前限制
 
 - 各 Skill 的运行时知识库和测试证据不随仓库分发。
 - 某些 Agent 宿主可能需要把六个子目录分别注册到 Skill 根目录。
-- GitHub 发布前仍应由仓库维护者选择并补充适用的开源许可证。
+- 若宿主不支持批量发现 Skill，应按 `docs/installation.md` 注册六个子目录。
 
