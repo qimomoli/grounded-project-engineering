@@ -1,0 +1,22 @@
+# Runtime knowledge, test workspaces and evidence
+skills/*/knowledge/
+skills/*/workspace/
+skills/*/runs/
+skills/*/evidence/
+skills/*/logs/
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Generated media and raw test output
+*.log
+*.mp4
+*.mov
+*.zip
+

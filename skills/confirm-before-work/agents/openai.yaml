@@ -1,0 +1,6 @@
+interface:
+  display_name: "Confirm Before Work"
+  short_description: "Confirm scope before every write"
+  default_prompt: "Use $confirm-before-work before any direct or indirect local or external side effect: restate the action, targets or bounded patterns, intended change, likely side effects, assumptions, boundaries, and open questions, then wait for explicit user confirmation. Cover files, tools, Git, network, databases, cloud resources, services, messages, and code publication. Ask again if the approved scope changes."
+
+

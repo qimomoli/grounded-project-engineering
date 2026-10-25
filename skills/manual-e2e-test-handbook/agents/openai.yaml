@@ -1,0 +1,6 @@
+interface:
+  display_name: "Manual E2E Test Handbook"
+  short_description: "先机测再生成可执行人工全链路测试手册"
+  default_prompt: "分析当前对话中的功能改造，确认后在本地 Docker 环境完成新功能和受影响旧功能的机测，再基于真实命令和结果生成中文人工测试手册。"
+
+

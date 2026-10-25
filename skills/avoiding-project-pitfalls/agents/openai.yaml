@@ -1,0 +1,8 @@
+interface:
+  display_name: "Avoid Project Pitfalls"
+  short_description: "Recall pitfalls and recheck current code"
+  default_prompt: "Use $avoiding-project-pitfalls to identify relevant historical risks, verify them against current code, and maintain validated lessons automatically."
+policy:
+  allow_implicit_invocation: true
+
+

@@ -1,0 +1,52 @@
+[
+  {
+    "target": "grounding-project-knowledge/knowledge/projects/a/entries/x.json",
+    "operation": "update",
+    "content_class": "validated-knowledge",
+    "expected": true
+  },
+  {
+    "target": "avoiding-project-pitfalls/knowledge/projects/a/project.json",
+    "operation": "create",
+    "content_class": "validated-knowledge",
+    "expected": true
+  },
+  {
+    "target": "grounding-project-knowledge/SKILL.md",
+    "operation": "update",
+    "content_class": "instructions",
+    "expected": false
+  },
+  {
+    "target": "avoiding-project-pitfalls/scripts/pitfall_store.py",
+    "operation": "update",
+    "content_class": "code",
+    "expected": false
+  },
+  {
+    "target": "grounding-project-knowledge/knowledge/projects/a/entries/x.json",
+    "operation": "delete",
+    "content_class": "validated-knowledge",
+    "expected": false
+  },
+  {
+    "target": "other-skill/knowledge/projects/a/entries/x.json",
+    "operation": "update",
+    "content_class": "validated-knowledge",
+    "expected": false
+  },
+  {
+    "target": "grounding-project-knowledge/knowledge/projects/../SKILL.md",
+    "operation": "update",
+    "content_class": "validated-knowledge",
+    "expected": false
+  },
+  {
+    "target": "avoiding-project-pitfalls/knowledge/projects/a/.entry.tmp",
+    "operation": "temp-cleanup",
+    "content_class": "tool-owned-temporary",
+    "expected": true
+  }
+]
+
+

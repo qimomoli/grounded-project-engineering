@@ -1,0 +1,8 @@
+interface:
+  display_name: "Ground Project Knowledge"
+  short_description: "Route local projects and ground knowledge in code"
+  default_prompt: "Use $grounding-project-knowledge to locate relevant local repositories, read current project rules, verify facts against current code, and maintain reusable knowledge."
+policy:
+  allow_implicit_invocation: true
+
+
