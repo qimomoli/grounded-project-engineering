@@ -122,18 +122,78 @@
 3. 所有测试数据使用前缀：`<prefix>`。
 4. 不连接生产、共享或远程环境。
 
-## 5. 启动与健康检查
+## 4.1 环境变量与路径初始化
 
-1. `<short cmd>`
-2. `<short cmd>`
-3. 预期：`<container health and service readiness>`。
+目标操作系统：`<windows/linux/macos>`
+命令 Shell：`<cmd.exe / POSIX shell>`
+仓库目录：`<absolute path>`
+Compose 文件：`<absolute path>`
 
-## 6. 测试数据准备
+按顺序执行以下初始化命令。每个变量必须有实际值、来源和格式；禁止在后续步骤首次出现未定义占位符。
 
-1. `<short cmd>`
-2. 数据库操作必须使用容器命令：`docker compose exec <db> <client> ...`。
-3. Redis 操作必须使用容器命令：`docker compose exec <redis> redis-cli ...`。
-4. 记录生成的 ID、业务键和数据前缀：`<values>`。
+```cmd
+<cd /d ...>
+```
+
+```cmd
+<set TEST_PREFIX=...>
+```
+
+| 变量 | 值/格式 | 来源 | 验证命令 |
+|---|---|---|---|
+| `<VAR>` | `<value or format>` | `<repo/config/operator>` | `<short cmd>` |
+
+## 4.2 可执行命令总表
+
+本手册必须能脱离聊天上下文执行。下面的表覆盖启动、数据、触发、核验和清理；每行只放一个命令或一个完整 UI 动作。
+
+| 步骤 | 阶段 | 工作目录 | 命令/动作 | 预期输出/状态 | 实际结果 | 通过标准 | 证据 |
+|---|---|---|---|---|---|---|---|
+| P-001 | 前置检查 | `<cwd>` | `<one exact command>` | `<expected>` | `<observed>` | `<rule>` | `<path>` |
+
+命令必须来自本轮实际执行记录。没有实际命令的步骤必须标记 `Blocked/待补充`，不能用“准备、启动、观察、检查”代替。
+
+## 5. 启动与健康检查（逐条可复制）
+
+1. 工作目录：`<cwd>`；执行：
+
+```cmd
+<exact startup command>
+```
+
+预期退出码/输出：`<expected>`；实际：`<observed>`；证据：`<path>`。
+
+2. 健康检查：
+
+```cmd
+<exact health command>
+```
+
+预期：`<status/body/log>`；不通过时执行：`<one diagnostic command>`。
+
+3. 每个 fixture、responder 和消息订阅者都必须单独列出启动命令、监听地址、输入格式和停止命令。
+
+## 6. 测试数据准备（逐条可复制）
+
+1. 先执行变量和前置数据命令：
+
+```cmd
+<exact setup command>
+```
+
+2. 数据库操作必须给出完整 Docker 命令、表、字段和值：
+
+```cmd
+<docker exec/compose exec database command>
+```
+
+3. Redis 操作必须给出完整 Docker 命令、key、value、TTL 和验证：
+
+```cmd
+<docker exec/compose exec redis command>
+```
+
+4. 消息、文件或 HTTP 输入必须给出 payload 和发送命令。记录生成的 ID、业务键和数据前缀：`<values>`。
 
 ## 7. 新功能人工场景
 
@@ -142,8 +202,20 @@
 - 目的：`<why>`
 - 前置数据：`<data>`
 - 操作：
-  1. `<UI/API action>`
-  2. `<short cmd or observation>`
+  1. 工作目录：`<cwd>`；执行：
+
+     ```cmd
+     <exact command or fully specified UI action>
+     ```
+
+     预期：`<exit code/response/log>`；实际：`<observed>`。
+  2. 执行：
+
+     ```cmd
+     <exact verification command>
+     ```
+
+     预期：`<expected>`；失败时：`<diagnostic command and stop/escalate rule>`。
 - 预期结果：`<expected>`
 - 观察点：`<response/log/message/database/Redis>`
 - 通过标准：`<pass rule>`
@@ -157,8 +229,20 @@
 - 受影响关系：`<change point and reason>`
 - 前置数据：`<data>`
 - 操作：
-  1. `<step>`
-  2. `<short cmd or observation>`
+  1. 工作目录：`<cwd>`；执行：
+
+     ```cmd
+     <exact legacy-flow command or fully specified UI action>
+     ```
+
+     预期：`<exit code/response/log>`；实际：`<observed>`。
+  2. 执行：
+
+     ```cmd
+     <exact legacy verification command>
+     ```
+
+     预期：`<expected unchanged behavior>`；失败时：`<diagnostic command and stop/escalate rule>`。
 - 预期结果：`<unchanged legacy behavior>`
 - 通过标准：`<pass rule>`
 - 结果：`Pass / Fail / Blocked`

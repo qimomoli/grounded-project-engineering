@@ -21,6 +21,7 @@ Use this skill when the user wants a local, step-by-step manual test guide deriv
 - Treat the current run as a recoverable state machine. Persist the phase, current Case, completed Cases, blockers, next action, approval envelope, and last checkpoint; do not rely on conversation memory for control flow.
 - When machine testing becomes difficult, make a bounded self-resolution attempt and escalate to the operator instead of looping. Record every attempt and stop when the retry budget or evidence boundary is reached.
 - Detect the execution operating system before producing or running commands. Record the selected target as `windows`, `linux`, or `macos` in the run state and handbook. The execution system is the default target; if the target differs, require an explicit operator override instead of guessing.
+- Treat the final handbook as an executable runbook, not a narrative test report: every setup, trigger, verification, failure branch, and cleanup action must have an exact command or a fully specified UI action, defined inputs, expected output, pass rule, and evidence location.
 
 ## Workflow
 
@@ -178,6 +179,7 @@ The final handbook is `machine-validated` only when:
 - approved remediation records identify the changed target, approval, retest Case ID, and regression evidence;
 - the run state reaches `PERSIST_RESULTS` only after all required Cases and recovery decisions are recorded;
 - the final state, event journal, machine results, and evidence paths are internally consistent;
+- every manual Case can be followed from a clean local environment without relying on conversation memory; its variables, commands, expected outputs, pass rule, failure branch, and cleanup steps are complete;
 - cross-service data and read-back checks pass where relevant;
 - the environment and test data were cleaned up or the remaining state is explicitly reported;
 - no required case is marked skipped or blocked.
@@ -187,6 +189,7 @@ If the gate is not satisfied, output a machine-test failure report with the case
 ### 5. Produce the handbook from evidence
 
 Read [references/handbook-template.md](references/handbook-template.md) before rendering the final handbook. Keep the handbook in Chinese unless the user requests another language.
+Read [references/executable-manual-standard.md](references/executable-manual-standard.md) as the final actionability gate. The standard is binding for command completeness, variable initialization, Case step tables, failure branches, and cleanup verification.
 
 The handbook must include:
 
@@ -209,7 +212,7 @@ The handbook must include:
 - a result-recording section with Pass/Fail/Blocked/Not applicable semantics;
 - known gaps and evidence-backed limitations.
 
-Use commands that were executed successfully whenever possible. Keep the manual usable by a person copying one step at a time; include one command per code block or numbered step and keep prose separate from commands.
+Use only commands captured from successful machine execution, or mark the step `Blocked/待人员输入` with its exact missing input. Keep the manual usable by a person copying one step at a time: initialize variables first, include one command per code block or numbered step, state the working directory and expected output, and provide a concrete next action for every failure. A prose verb such as “启动、准备、模拟、观察、检查、清理” is incomplete until paired with a command or fully specified UI action.
 
 Persist the finalized artifacts under the skill-local workspace described in [references/historical-reuse.md](references/historical-reuse.md). Include their exact paths in the run's initial batch authorization; after that approval, do not request separate confirmation for those listed writes. Use Chinese basenames for user-visible Markdown documents. Update the project index and global catalog only after the corresponding artifact is written successfully.
 
