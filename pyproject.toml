@@ -8,13 +8,20 @@ dynamic = ["version"]
 description = "Evidence-first, grounded, and testable project engineering skills for AI-assisted development."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE" }
+license = "MIT"
+dependencies = ["PyYAML>=6.0"]
 
 [project.scripts]
 gpe = "gpe.cli:main"
+
+[tool.setuptools]
+license-files = ["LICENSE"]
 
 [tool.setuptools.dynamic]
 version = { attr = "gpe.__version__" }
 
 [tool.setuptools.packages.find]
 include = ["gpe*"]
+
+[tool.setuptools.package-data]
+gpe = ["_skills/**/*"]

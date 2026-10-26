@@ -27,7 +27,7 @@ skills/
 
 ## 可复现安装
 
-仓库提供 `gpe` CLI。它只依赖 Python 标准库，安装器从当前仓库复制完整的 Skill 目录，不复制运行时资料。
+仓库提供 `gpe` CLI。它依赖 Python 和 PyYAML，安装器从当前仓库或已安装的发行包复制完整的 Skill 目录，不复制运行时资料。
 
 先在仓库根目录执行：
 
@@ -72,6 +72,20 @@ python -m gpe install --source . --target "$HOME/.codex/skills"
 - 变更是否通过仓库提供的脚本测试和策略评估。
 
 不要用运行时生成的项目数据覆盖静态 Skill 文件，也不要把单个项目的修复经验直接写成跨项目规则。
+
+## 发布包
+
+版本发布由 `vMAJOR.MINOR.PATCH` Tag 触发。Release 工作流会构建 wheel 和 sdist，
+在干净虚拟环境中执行 `gpe validate` 与完整 Skill 安装，并发布 `SHA256SUMS`。
+发布前应同步更新 `CHANGELOG.md`，再创建与 `gpe.__version__` 一致的 Tag。
+
+从 wheel 安装后不需要源码仓库：
+
+```text
+python -m pip install grounded_project_engineering-<VERSION>-py3-none-any.whl
+python -m gpe validate
+python -m gpe install --target <SKILL_ROOT>
+```
 
 ## 验证
 

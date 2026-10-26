@@ -50,7 +50,7 @@
 
 ## CLI 与验证
 
-仓库提供一个只依赖 Python 标准库的 CLI。安装开发入口后，可以使用：
+仓库提供一个带 YAML 清单校验和安装能力的 CLI。安装入口后，可以使用：
 
 ```text
 python -m pip install -e .

@@ -10,6 +10,7 @@ from .repository import RepositoryError, find_repo_root, install_skills, validat
 
 
 def _test_commands(root: Path) -> tuple[list[str], ...]:
+    root = root.resolve()
     return (
         [
             sys.executable,
@@ -17,7 +18,7 @@ def _test_commands(root: Path) -> tuple[list[str], ...]:
             "unittest",
             "discover",
             "-s",
-            "tests",
+            str(root / "tests"),
             "-p",
             "test_*.py",
             "-v",
@@ -28,7 +29,7 @@ def _test_commands(root: Path) -> tuple[list[str], ...]:
             "unittest",
             "discover",
             "-s",
-            "skills/grounding-project-knowledge/scripts",
+            str(root / "skills" / "grounding-project-knowledge" / "scripts"),
             "-p",
             "test_*.py",
             "-v",
@@ -39,16 +40,16 @@ def _test_commands(root: Path) -> tuple[list[str], ...]:
             "unittest",
             "discover",
             "-s",
-            "skills/avoiding-project-pitfalls/scripts",
+            str(root / "skills" / "avoiding-project-pitfalls" / "scripts"),
             "-p",
             "test_*.py",
             "-v",
         ],
         [
             sys.executable,
-            "skills/confirm-before-work/evals/validate.py",
+            str(root / "skills" / "confirm-before-work" / "evals" / "validate.py"),
             "--cases",
-            "skills/confirm-before-work/evals/cases.json",
+            str(root / "skills" / "confirm-before-work" / "evals" / "cases.json"),
         ],
     )
 
@@ -60,10 +61,15 @@ def _run_tests(root: Path) -> int:
         for error in errors:
             print(f"- {error}")
         return 1
-    for command in _test_commands(root):
-        print("$ " + " ".join(command))
-        completed = subprocess.run(command, cwd=root, check=False)
+    for index, command in enumerate(_test_commands(root), start=1):
+        print(f"RUN[{index}]: " + " ".join(command), flush=True)
+        try:
+            completed = subprocess.run(command, cwd=root, check=False)
+        except OSError as exc:
+            print(f"FAIL[{index}]: could not start command: {exc}", flush=True)
+            return 1
         if completed.returncode:
+            print(f"FAIL[{index}]: exit code {completed.returncode}", flush=True)
             return completed.returncode
     print("PASS: repository validation and all configured test suites")
     return 0
@@ -96,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "install":
             installed = install_skills(
-                args.source or Path.cwd(),
+                args.source,
                 args.target,
                 skills=tuple(args.skills) if args.skills else None,
                 force=args.force,

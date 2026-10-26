@@ -56,5 +56,5 @@
 | Requirement | Confirmed | User confirmation in current conversation |
 | Design | Confirmed | Four-problem repair scope and local sync boundary |
 | Development | Complete | `gpe/`, CI, docs, manifest, E2E platform rules, local Skill sync |
-| Testing | Complete | `python -m gpe test`, `python -m gpe validate`, `--version`, `git diff --check` |
-| Finish | Ready | No commit/push/release performed; unrelated working-tree changes preserved |
+| Testing | In Progress | Local Windows verification and wheel/sdist smoke checks pass; GitHub Actions must rerun the Windows matrix before completion |
+| Finish | Blocked | The previous CI run failed on Windows; no new commit/push/release performed |
