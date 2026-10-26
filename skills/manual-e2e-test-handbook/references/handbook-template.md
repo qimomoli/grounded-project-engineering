@@ -34,8 +34,21 @@
 - 事件日志：`<event-journal path>`
 - 范围清单：`<manifest path>`
 - 最终手册：`<handbook path; must match the authorized path>`
+- 命令台账：`<command-ledger path; must match the authorized path>`
+- 手册状态：`Draft/Running / Blocked / Machine-validated/Done`
+- 手册修订号：`<handbook_revision>`
+- 最近同步 Case：`<last_synced_case>`
+- 最近同步时间：`<last_handbook_sync>`
 
 本节必须能让另一轮会话恢复测试，不得只写“继续测试”或“处理失败”。
+
+## 0.2.1 实时维护记录
+
+手册从首个 Case 前开始维护。每个 Case 完成后立即追加一行，不能等全部机测结束后凭记忆重写。
+
+| 修订号 | 同步时间 | Case | 状态 | 实际结果 | 证据 | 下一动作 |
+|---|---|---|---|---|---|---|
+| `<handbook_revision>` | `<time>` | `<case-id>` | Draft/Running/Blocked/Done | `<observed>` | `<path>` | `<one action>` |
 
 ## 0.2 自助排查与人员求助
 
@@ -81,13 +94,13 @@
 
 ### 2.0.1 多应用链路联调
 
-| Case ID | 链路 | 前置独立 Case | 命令/动作 | 预期 | 实际 | 状态 | 证据 |
+| Case ID | 链路 | 前置独立 Case | 命令台账 Step ID | 预期 | 实际 | 状态 | 证据 |
 |---|---|---|---|---|---|---|---|
-| L-001 | `<app-a -> app-b>` | `I-001`, `I-003` | `<short cmd or action>` | `<expected>` | `<observed>` | Pass/Fail/Blocked/Skipped | `<evidence>` |
+| L-001 | `<app-a -> app-b>` | `I-001`, `I-003` | `CMD-L-001~CMD-L-003` | `<expected>` | `<observed>` | Pass/Fail/Blocked/Skipped | `<evidence>` |
 
-| Case ID | 变更点 | 命令/动作 | 预期 | 实际 | 状态 | 证据 |
+| Case ID | 变更点 | 命令台账 Step ID | 预期 | 实际 | 状态 | 证据 |
 |---|---|---|---|---|---|---|
-| M-001 | `<change>` | `<short cmd or action>` | `<expected>` | `<observed>` | Pass/Fail/Blocked/Skipped | `<log/response/data>` |
+| M-001 | `<change>` | `CMD-M-001` | `<expected>` | `<observed>` | Pass/Fail/Blocked/Skipped | `<log/response/data>` |
 
 状态含义：
 
@@ -124,8 +137,8 @@
 
 ## 4.1 环境变量与路径初始化
 
-目标操作系统：`<windows/linux/macos>`
-命令 Shell：`<cmd.exe / POSIX shell>`
+目标操作系统：`Windows`
+命令 Shell：`cmd.exe`
 仓库目录：`<absolute path>`
 Compose 文件：`<absolute path>`
 
@@ -141,7 +154,7 @@ Compose 文件：`<absolute path>`
 
 | 变量 | 值/格式 | 来源 | 验证命令 |
 |---|---|---|---|
-| `<VAR>` | `<value or format>` | `<repo/config/operator>` | `<short cmd>` |
+| `<VAR>` | `<value or format>` | `<repo/config/operator>` | `<CMD-STEP-ID>` |
 
 ## 4.2 可执行命令总表
 
@@ -151,7 +164,15 @@ Compose 文件：`<absolute path>`
 |---|---|---|---|---|---|---|---|
 | P-001 | 前置检查 | `<cwd>` | `<one exact command>` | `<expected>` | `<observed>` | `<rule>` | `<path>` |
 
-命令必须来自本轮实际执行记录。没有实际命令的步骤必须标记 `Blocked/待补充`，不能用“准备、启动、观察、检查”代替。
+命令必须来自 `command-ledger.md`。最终手册中不得保留 `<short cmd>`、`<short cmd or action>`、`<steps>`、`<docker command>`、`<short cleanup cmd>` 或等价的未定义动作占位符。
+
+## 4.3 操作者执行说明
+
+1. 按 `Win + R`，输入 `cmd`，回车打开命令提示符。
+2. 只复制代码块中的命令内容；代码块上的 `cmd` 标签不是命令。
+3. 按顺序一次执行一条命令，粘贴后按回车，确认预期输出后再继续。
+4. 先执行变量初始化命令；所有 `<PLACEHOLDER>` 必须按变量表替换，不能原样执行。
+5. 命令返回非预期结果时停止当前 Case，保存命令、输出和时间，执行对应失败诊断命令。
 
 ## 5. 启动与健康检查（逐条可复制）
 
@@ -250,24 +271,27 @@ Compose 文件：`<absolute path>`
 
 ## 9. 异常、边界与重复执行
 
-| Case ID | 场景 | 操作 | 预期 | 结果 | 证据 |
+| Case ID | 场景 | 命令台账 Step ID | 预期 | 结果 | 证据 |
 |---|---|---|---|---|---|
-| E-001 | `<validation/permission/retry/idempotency>` | `<steps>` | `<expected>` | `<status>` | `<evidence>` |
+| E-001 | `<validation/permission/retry/idempotency>` | `CMD-E-001~CMD-E-002` | `<expected>` | `<status>` | `<evidence>` |
 
 ## 10. 数据与链路核验
 
-- 服务响应：`<verified fields/status>`
-- 日志或消息：`<container and decisive line>`
-- 数据库：`<docker command and expected row/value>`
-- Redis：`<docker command and expected key/value/ttl>`
-- 下游读回：`<verified result>`
+| 核验对象 | 命令台账 Step ID | 预期 | 实际 | 证据 |
+|---|---|---|---|---|
+| 服务响应 | `CMD-V-001` | `<fields/status>` | `<observed>` | `<path>` |
+| 日志/消息 | `CMD-V-002` | `<decisive line>` | `<observed>` | `<path>` |
+| 数据库 | `CMD-V-003` | `<row/value>` | `<observed>` | `<path>` |
+| Redis | `CMD-V-004` | `<key/value/ttl>` | `<observed>` | `<path>` |
+| 下游读回 | `CMD-V-005` | `<result>` | `<observed>` | `<path>` |
 
 ## 11. 清理与复位
 
-1. `<short cleanup cmd>`
-2. 使用与准备阶段相同的前缀删除测试数据。
-3. `<short stop cmd>`（仅停止本次启动的服务，除非另有约定）。
-4. 复查：`<container/data cleanup evidence>`。
+| 步骤 | 工作目录 | 命令台账 Step ID | cmd 命令 | 预期 | 证据 |
+|---|---|---|---|---|---|
+| 1 | `<cwd>` | `CMD-C-001` | `<exact docker cleanup command>` | `<deleted rows/keys/objects>` | `<path>` |
+| 2 | `<cwd>` | `CMD-C-002` | `<exact stop command>` | `<only run services stopped>` | `<path>` |
+| 3 | `<cwd>` | `CMD-C-003` | `<exact cleanup verification command>` | `<no test data remains>` | `<path>` |
 
 ## 12. 执行记录
 

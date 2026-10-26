@@ -9,6 +9,7 @@ workspace/projects/<project-key>/runs/<run-id>/
 |-- run-state.json
 |-- event-journal.jsonl
 |-- machine-results.md
+|-- command-ledger.md
 `-- evidence/
 ```
 
@@ -22,12 +23,18 @@ workspace/projects/<project-key>/runs/<run-id>/
   "project_key": "project-a-1a2b3c4d5e",
   "manifest_path": "projects/project-a-1a2b3c4d5e/manifests/功能_版本_20261023-143000-a1b2c3d_改造范围清单.md",
   "handbook_path": "projects/project-a-1a2b3c4d5e/handbooks/功能_版本_20261023-143000-a1b2c3d_人工测试手册.md",
+  "command_ledger_path": "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/command-ledger.md",
+  "handbook_status": "Draft/Running",
+  "handbook_revision": 3,
+  "last_synced_case": "I-002",
+  "last_handbook_sync": "2026-10-23T14:36:10+08:00",
   "authorized_output_paths": [
     "projects/project-a-1a2b3c4d5e/manifests/功能_版本_20261023-143000-a1b2c3d_改造范围清单.md",
     "projects/project-a-1a2b3c4d5e/handbooks/功能_版本_20261023-143000-a1b2c3d_人工测试手册.md",
     "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/run-state.json",
     "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/event-journal.jsonl",
     "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/machine-results.md",
+    "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/command-ledger.md",
     "projects/project-a-1a2b3c4d5e/runs/20261023-143000-a1b2c3d/evidence/*.log"
   ],
   "phase": "APPLICATION_ISOLATION",
@@ -87,13 +94,14 @@ DONE
 
 ## 检查点规则
 
-每个 Case 后以及每个容器、数据或服务状态变化前后更新检查点。检查点必须说明：
+每个命令、Case 以及每个容器、数据或服务状态变化前后更新检查点；每个 Case 完成后必须同步命令台账、证据、机器结果和手册。检查点必须说明：
 
 - 当前阶段和 Case；
 - 已完成、失败和阻塞的 Case；
 - 预期与实际结果；
 - 证据位置；
 - 批量授权是否仍覆盖下一动作；
+- `handbook_status`、`handbook_revision` 和 `last_synced_case`；
 - 唯一且可执行的 `next_action`。
 
 一个 `next_action` 只描述一个动作。不要写“继续测试”或“处理失败”这类不可恢复的模糊描述。

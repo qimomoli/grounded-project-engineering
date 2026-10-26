@@ -20,7 +20,7 @@ Use this skill when the user wants a local, step-by-step manual test guide deriv
 - Store generated manifests, handbooks, sanitized evidence, and learned practices under this skill's own `workspace/` tree, never in the tested project's repository unless the user explicitly requests another location.
 - Treat the current run as a recoverable state machine. Persist the phase, current Case, completed Cases, blockers, next action, approval envelope, and last checkpoint; do not rely on conversation memory for control flow.
 - When machine testing becomes difficult, make a bounded self-resolution attempt and escalate to the operator instead of looping. Record every attempt and stop when the retry budget or evidence boundary is reached.
-- Detect the execution operating system before producing or running commands. Record the selected target as `windows`, `linux`, or `macos` in the run state and handbook. The execution system is the default target; if the target differs, require an explicit operator override instead of guessing.
+- Record Windows `cmd.exe` as the command environment in the run state and handbook. This skill's manual commands are Windows `cmd.exe` only; do not emit PowerShell, Bash, WSL, or POSIX variants.
 - Treat the final handbook as an executable runbook, not a narrative test report: every setup, trigger, verification, failure branch, and cleanup action must have an exact command or a fully specified UI action, defined inputs, expected output, pass rule, and evidence location.
 
 ## Workflow
@@ -96,6 +96,7 @@ Before mutating anything, present a short execution approval containing:
 - the case IDs that will be run;
 - the exact final handbook path for this `run-id`, plus every planned manifest, sanitized evidence, project metadata, experience, and index file, using exact paths or narrowly bounded run-specific patterns;
 - the run-state file, event journal, machine-result file, and evidence pattern for this `run-id`;
+- the command ledger file `runs/<run-id>/command-ledger.md`;
 - the statement that this single approval covers creation and updates of those listed files for this run, including the final handbook and its index entries.
 
 This is the run's batch authorization envelope. It is valid only for the listed `project-key`, `run-id`, operations, resources, and paths, and ends when the run completes or is abandoned. After approval, create and update the listed handbook, experience, manifest, evidence, metadata, and index files without asking again for each write.
@@ -113,7 +114,7 @@ After confirmation:
 7. Capture concise command output and the exact observed values needed to support each result.
 8. Clean up the created data and stop only services started for this run, unless the user asked to leave them running.
 
-After each Case and before/after any mutating action, write a checkpoint containing the current phase, Case status, observed result, evidence path, blockers, and exactly one next action. Append a concise event to the run journal. A `running` Case left by an interruption must be recovered as `Blocked` or rerun; it cannot be treated as `Pass`.
+Before the first Case, create the authorized handbook at its final path with status `Draft/Running`. After every command and Case, update the artifacts in this order: command ledger and evidence, event journal, run-state checkpoint, machine results, then the matching handbook section. Each handbook update records the current `handbook_revision`, `last_synced_case`, actual result, evidence, and one next action. A `running` Case left by an interruption must be recovered as `Blocked` or rerun; it cannot be treated as `Pass`.
 
 If a case fails, investigate only within the approved local scope. Do not silently broaden the target or change application code. Record the failure and stop the final-handbook gate until the required cases pass.
 
@@ -180,16 +181,19 @@ The final handbook is `machine-validated` only when:
 - the run state reaches `PERSIST_RESULTS` only after all required Cases and recovery decisions are recorded;
 - the final state, event journal, machine results, and evidence paths are internally consistent;
 - every manual Case can be followed from a clean local environment without relying on conversation memory; its variables, commands, expected outputs, pass rule, failure branch, and cleanup steps are complete;
+- `command-ledger.md` contains every successful command used to build the handbook, with Case ID, working directory, exit code, output, evidence path, and execution time;
+- the handbook has been updated after every completed Case and its final status is `Machine-validated/Done` only after the pass gate and cleanup succeed;
+- no final handbook contains `<short cmd>`, `<short cmd or action>`, `<steps>`, `<docker command>`, `<short cleanup cmd>`, or an equivalent undefined action placeholder;
 - cross-service data and read-back checks pass where relevant;
 - the environment and test data were cleaned up or the remaining state is explicitly reported;
 - no required case is marked skipped or blocked.
 
-If the gate is not satisfied, output a machine-test failure report with the case matrix, exact blocker, evidence, and next action. Do not label a draft as a reliable final handbook. A draft may be produced only when the user explicitly asks for one.
+If the gate is not satisfied, output a machine-test failure report with the case matrix, exact blocker, evidence, and next action. The required `Draft/Running` handbook may remain incomplete or blocked, but it must never be labeled as a reliable final handbook.
 
 ### 5. Produce the handbook from evidence
 
-Read [references/handbook-template.md](references/handbook-template.md) before rendering the final handbook. Keep the handbook in Chinese unless the user requests another language.
-Read [references/executable-manual-standard.md](references/executable-manual-standard.md) as the final actionability gate. The standard is binding for command completeness, variable initialization, Case step tables, failure branches, and cleanup verification.
+Read [references/handbook-template.md](references/handbook-template.md) before creating the running handbook and again before closing it. Keep the handbook in Chinese unless the user requests another language.
+Read [references/executable-manual-standard.md](references/executable-manual-standard.md) as the final actionability gate. The standard is binding for Windows `cmd.exe` commands, command-ledger provenance, variable initialization, Case step tables, failure branches, and cleanup verification.
 
 The handbook must include:
 
@@ -212,15 +216,15 @@ The handbook must include:
 - a result-recording section with Pass/Fail/Blocked/Not applicable semantics;
 - known gaps and evidence-backed limitations.
 
-Use only commands captured from successful machine execution, or mark the step `Blocked/待人员输入` with its exact missing input. Keep the manual usable by a person copying one step at a time: initialize variables first, include one command per code block or numbered step, state the working directory and expected output, and provide a concrete next action for every failure. A prose verb such as “启动、准备、模拟、观察、检查、清理” is incomplete until paired with a command or fully specified UI action.
+Use only commands captured from successful machine execution and referenced by `command-ledger.md`, or mark the step `Blocked/待人员输入` with its exact missing input. Keep the manual usable by a person copying one step at a time: initialize variables first, include one Windows `cmd.exe` command per code block or numbered step, state the working directory and expected output, and provide a concrete next action for every failure. A prose verb such as “启动、准备、模拟、观察、检查、清理” is incomplete until paired with a command or fully specified UI action.
 
-Persist the finalized artifacts under the skill-local workspace described in [references/historical-reuse.md](references/historical-reuse.md). Include their exact paths in the run's initial batch authorization; after that approval, do not request separate confirmation for those listed writes. Use Chinese basenames for user-visible Markdown documents. Update the project index and global catalog only after the corresponding artifact is written successfully.
+Persist the running and finalized handbook under the skill-local workspace described in [references/historical-reuse.md](references/historical-reuse.md). Create it before the first Case, update it after each Case, and close it in place by changing its status; do not regenerate it from memory at the end. Include all exact paths in the run's initial batch authorization; after that approval, do not request separate confirmation for those listed writes. Use Chinese basenames for user-visible Markdown documents. Update the project index and global catalog only after the corresponding artifact is written successfully.
 
 After each completed run, extract reusable knowledge into the project experience record. Promote an item to the cross-project experience library only when it is generic, evidence-backed, sanitized, and states its applicability and invalidation conditions. Do not promote business-specific identifiers, credentials, customer data, or assumptions tied to one repository.
 
 ## Command rules
 
-- Commands must match the recorded target operating system. For `windows`, use native `cmd.exe` syntax such as `cd /d`, `set`, `curl`, `docker`, and `docker compose`; do not substitute PowerShell. For `linux` or `macos`, use POSIX shell syntax such as `cd`, `export`, `curl`, `docker`, and `docker compose`; do not emit Windows `%VAR%` or `cd /d` syntax. When a command is shell-specific, provide the variant for the selected target only.
+- Commands must be Windows `cmd.exe` syntax such as `cd /d`, `set`, `curl`, `docker`, and `docker compose`; do not provide PowerShell, Bash, WSL, or POSIX variants.
 - Keep each command near or below 100 characters. Split long operations into short numbered commands and use short variables or a working-directory change. Do not hide a long command behind an unreadable one-liner.
 - Database and Redis operations must run inside the relevant container with `docker exec` or `docker compose exec`. Do not use host-installed `mysql`, `psql`, `redis-cli`, or equivalent clients.
 - Use read-only queries for verification when possible. For mutations, make the test-data prefix explicit and provide the matching cleanup command.
