@@ -65,7 +65,10 @@ class InstallerTests(unittest.TestCase):
                 skills=("ai-necessity-audit",),
             )
 
-            self.assertEqual(installed, [target / "ai-necessity-audit"])
+            self.assertEqual(
+                [path.resolve() for path in installed],
+                [(target / "ai-necessity-audit").resolve()],
+            )
             self.assertTrue((target / "ai-necessity-audit" / "SKILL.md").is_file())
             self.assertTrue((target / "ai-necessity-audit" / "agents" / "openai.yaml").is_file())
             self.assertFalse((target / "ai-necessity-audit" / "workspace").exists())
