@@ -20,7 +20,7 @@ Use this skill when the user wants a local, step-by-step manual test guide deriv
 - Store generated manifests, handbooks, sanitized evidence, and learned practices under this skill's own `workspace/` tree, never in the tested project's repository unless the user explicitly requests another location.
 - Treat the current run as a recoverable state machine. Persist the phase, current Case, completed Cases, blockers, next action, approval envelope, and last checkpoint; do not rely on conversation memory for control flow.
 - When machine testing becomes difficult, make a bounded self-resolution attempt and escalate to the operator instead of looping. Record every attempt and stop when the retry budget or evidence boundary is reached.
-- Record Windows `cmd.exe` as the command environment in the run state and handbook. This skill's manual commands are Windows `cmd.exe` only; do not emit PowerShell, Bash, WSL, or POSIX variants.
+- Record Windows `cmd.exe` as the command environment and operating system in the run state and handbook. This skill's manual commands are Windows `cmd.exe` only; do not emit PowerShell, Bash, WSL, or POSIX variants. If a target-specific compatibility note mentions POSIX syntax, keep it explanatory only and never place it in an executable Windows step.
 - Treat the final handbook as an executable runbook, not a narrative test report: every setup, trigger, verification, failure branch, and cleanup action must have an exact command or a fully specified UI action, defined inputs, expected output, pass rule, and evidence location.
 
 ## Workflow
